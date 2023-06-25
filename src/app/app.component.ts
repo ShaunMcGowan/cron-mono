@@ -1,9 +1,10 @@
 import { Component } from '@angular/core';
 import { RouterModule } from '@angular/router';
+import { IonicModule } from '@ionic/angular';
 
 @Component({
   standalone: true,
-  imports: [ RouterModule],
+  imports: [RouterModule, IonicModule],
   selector: 'ionic-cron-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],

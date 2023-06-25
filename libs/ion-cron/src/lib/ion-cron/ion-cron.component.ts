@@ -1,11 +1,12 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { IonicModule } from '@ionic/angular';
 
 @Component({
   selector: 'ionic-cron-ion-cron',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, IonicModule],
   templateUrl: './ion-cron.component.html',
-  styleUrls: ['./ion-cron.component.css'],
+  styles: [``],
 })
 export class IonCronComponent {}
