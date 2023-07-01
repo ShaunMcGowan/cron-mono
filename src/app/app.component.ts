@@ -5,10 +5,10 @@ import { IonicModule } from '@ionic/angular';
 @Component({
   standalone: true,
   imports: [RouterModule, IonicModule],
-  selector: 'ionic-cron-root',
+  selector: 'cron-mono-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
 })
 export class AppComponent {
-  title = 'ionic-cron';
+  title = 'cron-mono';
 }

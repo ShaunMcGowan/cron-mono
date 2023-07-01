@@ -5,7 +5,7 @@ import { CronGenComponent } from './cron-editor/cron-editor.component';
 import { CronOptions } from './cron-editor/CronOptions';
 
 @Component({
-  selector: 'ionic-cron-ion-cron',
+  selector: 'cron-mono-ion-cron',
   standalone: true,
   imports: [CommonModule, IonicModule, CronGenComponent],
   template: `

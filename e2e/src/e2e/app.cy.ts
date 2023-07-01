@@ -1,6 +1,6 @@
 import { getGreeting } from '../support/app.po';
 
-describe('ionic-cron', () => {
+describe('cron-mono', () => {
   beforeEach(() => cy.visit('/'));
 
   it('should display welcome message', () => {
@@ -8,6 +8,6 @@ describe('ionic-cron', () => {
     cy.login('my-email@something.com', 'myPassword');
 
     // Function helper example, see `../support/app.po.ts` file
-    getGreeting().contains('Welcome ionic-cron');
+    getGreeting().contains('Welcome cron-mono');
   });
 });

@@ -15,13 +15,13 @@ describe('AppComponent', () => {
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
     expect(compiled.querySelector('h1')?.textContent).toContain(
-      'Welcome ionic-cron'
+      'Welcome cron-mono'
     );
   });
 
-  it(`should have as title 'ionic-cron'`, () => {
+  it(`should have as title 'cron-mono'`, () => {
     const fixture = TestBed.createComponent(AppComponent);
     const app = fixture.componentInstance;
-    expect(app.title).toEqual('ionic-cron');
+    expect(app.title).toEqual('cron-mono');
   });
 });

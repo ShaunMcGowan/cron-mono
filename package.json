@@ -1,5 +1,5 @@
 {
-  "name": "@ionic-cron/source",
+  "name": "@cron-mono/source",
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {

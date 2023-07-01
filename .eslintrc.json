@@ -20,7 +20,7 @@
           "error",
           {
             "type": "element",
-            "prefix": "ionic-cron",
+            "prefix": "cron-mono",
             "style": "kebab-case"
           }
         ]

@@ -2,7 +2,7 @@
   "name": "ion-cron",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/ion-cron/src",
-  "prefix": "ionic-cron",
+  "prefix": "cron-mono",
   "tags": [],
   "projectType": "library",
   "targets": {

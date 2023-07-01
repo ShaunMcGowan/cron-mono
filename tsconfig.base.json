@@ -15,7 +15,7 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@ionic-cron/ion-cron": ["libs/ion-cron/src/index.ts"]
+      "@cron-mono/ion-cron": ["libs/ion-cron/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]
