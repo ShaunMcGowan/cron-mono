@@ -1,0 +1,396 @@
+<ion-segment (ionChange)="onTabChange()" [(ngModel)]="activeTab">
+  <ion-segment-button value="minutes" *ngIf="!options.hideMinutesTab">
+    <ion-label>Minutes</ion-label>
+  </ion-segment-button>
+
+  <ion-segment-button value="hourly" *ngIf="!options.hideHourlyTab">
+    <ion-label>Hourly</ion-label>
+  </ion-segment-button>
+
+  <ion-segment-button value="daily" *ngIf="!options.hideDailyTab">
+    <ion-label>Daily</ion-label>
+  </ion-segment-button>
+
+  <ion-segment-button value="weekly" *ngIf="!options.hideWeeklyTab">
+    <ion-label>Weekly</ion-label>
+  </ion-segment-button>
+
+  <ion-segment-button value="monthly" *ngIf="!options.hideMonthlyTab">
+    <ion-label>Monthly</ion-label>
+  </ion-segment-button>
+
+  <ion-segment-button value="yearly" *ngIf="!options.hideYearlyTab">
+    <ion-label>Yearly</ion-label>
+  </ion-segment-button>
+
+  <ion-segment-button value="advanced" *ngIf="!options.hideAdvancedTab">
+    <ion-label>Advanced</ion-label>
+  </ion-segment-button>
+</ion-segment>
+
+<section class="cron-editor-main">
+  <ng-container *ngIf="activeTab === 'minutes'">
+    <!-- Minutes Tab content -->
+    <div class="cron-editor-tab-content">
+      <span class="cron-form-label">Every </span>
+      <cron-time-picker
+        [formGroup]="minutesForm"
+        [use24HourTime]="options.use24HourTime"
+        [hideHours]="true"
+        [hideSeconds]="options.hideSeconds || !isCronFlavorQuartz"
+      ></cron-time-picker>
+    </div>
+  </ng-container>
+
+  <ng-container *ngIf="activeTab === 'hourly'">
+    <!-- Hourly Tab content -->
+    <div class="cron-editor-tab-content">
+      <span class="cron-form-label">Every </span>
+      <cron-time-picker
+        [formGroup]="hourlyForm"
+        [use24HourTime]="options.use24HourTime"
+        [hideSeconds]="options.hideSeconds || !isCronFlavorQuartz"
+      ></cron-time-picker>
+    </div>
+  </ng-container>
+
+  <ng-container *ngIf="activeTab === 'daily'">
+    <!-- Daily Tab content -->
+    <div class="cron-editor-tab-content" [formGroup]="dailyForm">
+      <ion-radio-group class="cron-editor-radio-group" formControlName="subTab">
+        <ion-item formGroupName="everyDays">
+          <ion-label>Every</ion-label>
+          <ion-select formControlName="days">
+            <ion-select-option
+              *ngFor="let monthDay of selectOptions.monthDays"
+              [value]="monthDay"
+            >
+              {{ monthDay }}
+            </ion-select-option>
+          </ion-select>
+        </ion-item>
+        <ion-item>
+          <ion-label>at</ion-label>
+          <cron-time-picker
+            formGroupName="everyDays"
+            [use24HourTime]="options.use24HourTime"
+            [hideSeconds]="options.hideSeconds || !isCronFlavorQuartz"
+          ></cron-time-picker>
+        </ion-item>
+      </ion-radio-group>
+    </div>
+  </ng-container>
+
+  <ng-container *ngIf="activeTab === 'weekly'">
+    <!-- Weekly Tab content -->
+    <div class="cron-editor-tab-content">
+      <div [formGroup]="weeklyForm">
+        <ion-checkbox class="checkbox-margin" formControlName="MON"
+          >Monday</ion-checkbox
+        >
+        <ion-checkbox class="checkbox-margin" formControlName="TUE"
+          >Tuesday</ion-checkbox
+        >
+        <ion-checkbox class="checkbox-margin" formControlName="WED"
+          >Wednesday</ion-checkbox
+        >
+        <ion-checkbox class="checkbox-margin" formControlName="THU"
+          >Thursday</ion-checkbox
+        >
+        <ion-checkbox class="checkbox-margin" formControlName="FRI"
+          >Friday</ion-checkbox
+        >
+        <ion-checkbox class="checkbox-margin" formControlName="SAT"
+          >Saturday</ion-checkbox
+        >
+        <ion-checkbox class="checkbox-margin" formControlName="SUN"
+          >Sunday</ion-checkbox
+        >
+      </div>
+
+      <ion-item>
+        <ion-label>at</ion-label>
+        <cron-time-picker
+          [formGroup]="weeklyForm"
+          [use24HourTime]="options.use24HourTime"
+          [hideSeconds]="options.hideSeconds || !isCronFlavorQuartz"
+        ></cron-time-picker>
+      </ion-item>
+    </div>
+  </ng-container>
+
+  <ng-container *ngIf="activeTab === 'monthly'">
+    <!-- Monthly Tab content -->
+    <div class="cron-editor-tab-content" [formGroup]="monthlyForm">
+      <ion-radio-group class="cron-editor-radio-group" formControlName="subTab">
+        <ion-radio
+          name="monthly-radio"
+          class="cron-editor-radio-button"
+          value="specificDay"
+          [ngClass]="state.formRadioClass"
+        >
+          <!-- Specific day -->
+          <span formGroupName="specificDay">
+            On the
+
+            <ng-container *ngIf="options.cronFlavor === 'quartz'">
+              <ion-item>
+                <ion-label>Day</ion-label>
+                <ion-select class="month-days" formControlName="day">
+                  <ion-select-option
+                    *ngFor="let monthDaysWithLast of selectOptions.monthDaysWithLasts"
+                    [value]="monthDaysWithLast"
+                  >
+                    {{ monthDayDisplay(monthDaysWithLast) }}
+                  </ion-select-option>
+                </ion-select>
+              </ion-item>
+            </ng-container>
+
+            <ng-container *ngIf="options.cronFlavor === 'standard'">
+              <ion-item>
+                <ion-label>Day</ion-label>
+                <ion-select class="month-days" formControlName="day">
+                  <ion-select-option
+                    *ngFor="let monthDaysWithOutLast of selectOptions.monthDaysWithOutLasts"
+                    [value]="monthDaysWithOutLast"
+                  >
+                    {{ monthDayDisplay(monthDaysWithOutLast) }}
+                  </ion-select-option>
+                </ion-select>
+              </ion-item>
+            </ng-container>
+
+            of every
+
+            <ion-item>
+              <ion-label>Month</ion-label>
+              <ion-select
+                class="months-small"
+                formControlName="months"
+                [ngClass]="options.formSelectClass"
+              >
+                <ion-select-option
+                  *ngFor="let month of selectOptions.months"
+                  [value]="month"
+                >
+                  {{ month }}
+                </ion-select-option>
+              </ion-select>
+            </ion-item>
+
+            at time
+
+            <cron-time-picker
+              [disabled]="disabled"
+              [formGroup]="getFormGroup(monthlyForm.controls['specificWeekDay'])"
+              [use24HourTime]="options.use24HourTime"
+              [hideSeconds]="options.hideSeconds || !isCronFlavorQuartz"
+            >
+            </cron-time-picker>
+          </span>
+        </ion-radio>
+
+        <ion-radio
+          name="monthly-radio"
+          class="cron-editor-radio-button"
+          value="specificWeekDay"
+          [ngClass]="state.formRadioClass"
+        >
+          <!-- Specific Week day -->
+          <span formGroupName="specificWeekDay">
+            On the
+
+            <ion-item>
+              <ion-label>Week</ion-label>
+              <ion-select
+                class="day-order-in-month"
+                formControlName="monthWeek"
+                [ngClass]="options.formSelectClass"
+              >
+                <ion-select-option
+                  *ngFor="let monthWeek of selectOptions.monthWeeks"
+                  [value]="monthWeek"
+                >
+                  {{ monthWeekDisplay(monthWeek) }}
+                </ion-select-option>
+              </ion-select>
+            </ion-item>
+
+            <ion-item>
+              <ion-label>Day</ion-label>
+              <ion-select
+                class="week-days"
+                formControlName="day"
+                [ngClass]="options.formSelectClass"
+              >
+                <ion-select-option
+                  *ngFor="let day of selectOptions.days"
+                  [value]="day"
+                >
+                  {{ dayDisplay(day) }}
+                </ion-select-option>
+              </ion-select>
+            </ion-item>
+
+            of every
+
+            <ion-item>
+              <ion-label>Month</ion-label>
+              <ion-select class="months-small" formControlName="months">
+                <ion-select-option
+                  *ngFor="let month of selectOptions.months"
+                  [value]="month"
+                >
+                  {{ month }}
+                </ion-select-option>
+              </ion-select>
+            </ion-item>
+
+            at time
+
+            <cron-time-picker
+              [formGroup]="getFormGroup(monthlyForm.controls['specificWeekDay'])"
+              [use24HourTime]="options.use24HourTime"
+              [hideSeconds]="options.hideSeconds || !isCronFlavorQuartz"
+            >
+            </cron-time-picker>
+          </span>
+        </ion-radio>
+      </ion-radio-group>
+    </div>
+  </ng-container>
+
+  <ng-container *ngIf="activeTab === 'yearly'">
+    <div class="cron-editor-tab-content" [formGroup]="yearlyForm">
+      <ion-radio-group class="cron-editor-radio-group" formControlName="subTab">
+        <ion-radio
+          name="yearly-radio"
+          class="cron-editor-radio-button"
+          value="specificMonthDay"
+          [ngClass]="state.formRadioClass"
+        >
+          On the
+
+          <ion-item
+            formGroupName="specificMonthDay"
+            *ngIf="options.cronFlavor === 'quartz'"
+          >
+            <ion-label>Day</ion-label>
+            <ion-select class="month-days" formControlName="day">
+              <ion-select-option
+                *ngFor="let monthDaysWithLast of selectOptions.monthDaysWithLasts"
+                [value]="monthDaysWithLast"
+              >
+                {{monthDayDisplay(monthDaysWithLast)}}
+              </ion-select-option>
+            </ion-select>
+          </ion-item>
+
+          <ion-item
+            formGroupName="specificMonthDay"
+            *ngIf="options.cronFlavor === 'standard'"
+          >
+            <ion-label>Day</ion-label>
+            <ion-select class="month-days" formControlName="day">
+              <ion-select-option
+                *ngFor="let monthDaysWithOutLast of selectOptions.monthDaysWithOutLasts"
+                [value]="monthDaysWithOutLast"
+              >
+                {{monthDayDisplay(monthDaysWithOutLast)}}
+              </ion-select-option>
+            </ion-select>
+          </ion-item>
+
+          of
+
+          <ion-item formGroupName="specificMonthDay">
+            <ion-label>Month</ion-label>
+            <ion-select class="months" formControlName="month">
+              <ion-select-option
+                *ngFor="let month of selectOptions.months"
+                [value]="month"
+              >
+                {{monthDisplay(month)}}
+              </ion-select-option>
+            </ion-select>
+          </ion-item>
+
+          at time
+
+          <cron-time-picker
+            [disabled]="disabled"
+            [formGroup]="getFormGroup(yearlyForm.controls['specificMonthDay'])"
+            [use24HourTime]="options.use24HourTime"
+            [hideSeconds]="options.hideSeconds || !isCronFlavorQuartz"
+          >
+          </cron-time-picker>
+        </ion-radio>
+
+        <ion-radio
+          name="yearly-radio"
+          class="cron-editor-radio-button"
+          value="specificMonthWeek"
+          [ngClass]="state.formRadioClass"
+        >
+          On the
+
+          <ion-item formGroupName="specificMonthWeek">
+            <ion-label>Week</ion-label>
+            <ion-select class="day-order-in-month" formControlName="monthWeek">
+              <ion-select-option
+                *ngFor="let monthWeek of selectOptions.monthWeeks"
+                [value]="monthWeek"
+              >
+                {{monthWeekDisplay(monthWeek)}}
+              </ion-select-option>
+            </ion-select>
+          </ion-item>
+
+          <ion-item formGroupName="specificMonthWeek">
+            <ion-label>Day</ion-label>
+            <ion-select class="week-days" formControlName="day">
+              <ion-select-option
+                *ngFor="let day of selectOptions.days"
+                [value]="day"
+              >
+                {{day}}
+              </ion-select-option>
+            </ion-select>
+          </ion-item>
+
+          of
+
+          <ion-item formGroupName="specificMonthWeek">
+            <ion-label>Month</ion-label>
+            <ion-select class="months" formControlName="month">
+              <ion-select-option
+                *ngFor="let month of selectOptions.months"
+                [value]="month"
+              >
+                {{monthDisplay(month)}}
+              </ion-select-option>
+            </ion-select>
+          </ion-item>
+
+          at time
+
+          <cron-time-picker
+            [disabled]="disabled"
+            [formGroup]="getFormGroup(yearlyForm.controls['specificMonthDay'])"
+            [use24HourTime]="options.use24HourTime"
+            [hideSeconds]="options.hideSeconds || !isCronFlavorQuartz"
+          >
+          </cron-time-picker>
+        </ion-radio>
+      </ion-radio-group>
+    </div>
+  </ng-container>
+  <ng-container *ngIf="!options.hideAdvancedTab">
+    <!-- Advanced Tab content -->
+    <ion-item class="cron-editor-tab-content" [formGroup]="advancedForm">
+      <!-- Add your advanced tab content here -->
+      <ion-text>{{cron}}</ion-text>
+    </ion-item>
+  </ng-container>
+</section>
