@@ -26,38 +26,35 @@ function* range(start: number, end: number) {
   // eslint-disable-next-line @angular-eslint/component-selector
   selector: 'cron-time-picker',
   template: `
-    <ion-item [formGroup]="getFormGroup(parent.control)">
-      <ng-container *ngIf="!hideHours">
+    <ion-list [formGroup]="getFormGroup(parent.control)">
+      <ion-item *ngIf="!hideHours">
         <ion-label>Hour(s)</ion-label>
         <ion-select formControlName="hours">
           <ion-select-option *ngFor="let hour of hours" [value]="hour">
             {{ hour }}
           </ion-select-option>
         </ion-select>
-      </ng-container>
+      </ion-item>
 
-      <ng-container *ngIf="!hideMinutes">
-        <span *ngIf="!hideHours">:</span>
+      <ion-item *ngIf="!hideMinutes">
         <ion-label>Minute(s)</ion-label>
         <ion-select formControlName="minutes">
           <ion-select-option *ngFor="let minute of minutes" [value]="minute">
             {{ minute }}
           </ion-select-option>
         </ion-select>
-      </ng-container>
+      </ion-item>
 
-      <ng-container *ngIf="!hideSeconds">
-        <span *ngIf="!hideMinutes">:</span>
+      <ion-item *ngIf="!hideSeconds">
         <ion-label>Second(s)</ion-label>
         <ion-select formControlName="seconds">
           <ion-select-option *ngFor="let second of seconds" [value]="second">
             {{ second }}
           </ion-select-option>
         </ion-select>
-      </ng-container>
+      </ion-item>
 
-      <ng-container *ngIf="!use24HourTime">
-        <span></span>.
+      <ion-item *ngIf="!use24HourTime && !hideHours">
         <ion-select formControlName="hourType">
           <ion-select-option
             *ngFor="let hourType of hourTypes"
@@ -66,8 +63,8 @@ function* range(start: number, end: number) {
             {{ hourType }}
           </ion-select-option>
         </ion-select>
-      </ng-container>
-    </ion-item>
+      </ion-item>
+    </ion-list>
   `,
   providers: [],
   imports: [IonicModule, ReactiveFormsModule, NgIf, NgForOf],

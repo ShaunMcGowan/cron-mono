@@ -32,7 +32,7 @@ export const CRON_VALUE_ACCESSOR: any = {
   // eslint-disable-next-line @angular-eslint/component-selector
   selector: 'cron-editor',
   templateUrl: './cron-editor.template.html',
-  styleUrls: ['./cron-editor.component.css'],
+  styles: [``],
   providers: [CRON_VALUE_ACCESSOR],
   imports: [
     TimePickerComponent,

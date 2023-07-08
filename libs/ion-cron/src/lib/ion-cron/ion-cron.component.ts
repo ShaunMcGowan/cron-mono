@@ -10,17 +10,11 @@ import { CronOptions } from './cron-editor/CronOptions';
   imports: [CommonModule, IonicModule, CronGenComponent],
   template: `
     <ion-content>
-      <ion-button>Hello!</ion-button>
-      <ion-card>
-        <ion-card-header>
-          <ion-card-title>Card Title</ion-card-title>
-          <ion-card-subtitle>Card Subtitle</ion-card-subtitle>
-        </ion-card-header>
-        <ion-card-content>
-          Here's a small text description for the card content. Nothing more,
-          nothing less.
-        </ion-card-content>
-      </ion-card>
+      <ion-item>
+        <ion-label>
+          <h1>Ion Cron Example Component</h1>
+        </ion-label>
+      </ion-item>
       <cron-editor [options]="cronOptions"></cron-editor>
     </ion-content>
   `,
@@ -40,7 +34,7 @@ export class IonCronComponent {
     hideSpecificWeekDayTab: false,
     hideSpecificMonthWeekTab: false,
 
-    use24HourTime: true,
+    use24HourTime: false,
     hideSeconds: false,
 
     cronFlavor: 'quartz', //standard or quartz
