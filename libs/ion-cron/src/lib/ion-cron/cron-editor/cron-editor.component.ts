@@ -18,7 +18,7 @@ import {
   ReactiveFormsModule,
 } from '@angular/forms';
 import { TimePickerComponent } from './cron-time-picker.component';
-import { NgClass, NgFor, NgForOf, NgIf } from '@angular/common';
+import { JsonPipe, NgClass, NgFor, NgForOf, NgIf } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
 
 export const CRON_VALUE_ACCESSOR: any = {
@@ -43,6 +43,7 @@ export const CRON_VALUE_ACCESSOR: any = {
     FormsModule,
     NgForOf,
     NgFor,
+    JsonPipe,
   ],
 })
 export class CronGenComponent implements OnInit, ControlValueAccessor {
@@ -52,6 +53,7 @@ export class CronGenComponent implements OnInit, ControlValueAccessor {
   @Output() cronChange = new EventEmitter<string>();
 
   public activeTab = '';
+  public activeSubTab = '';
   public selectOptions = this.getSelectOptions();
   public state: any;
 
@@ -270,6 +272,7 @@ export class CronGenComponent implements OnInit, ControlValueAccessor {
   }
 
   private computeDailyCron(state: any) {
+    console.log('I removed subtab stuff whats going on with this ', state);
     switch (state.subTab) {
       case 'everyDays':
         this.cron = `${
@@ -747,4 +750,6 @@ export class CronGenComponent implements OnInit, ControlValueAccessor {
   getFormGroup(control: AbstractControl) {
     return control as FormGroup;
   }
+
+  onSubTabChange(): void {}
 }

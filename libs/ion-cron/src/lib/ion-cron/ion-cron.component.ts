@@ -31,8 +31,6 @@ export class IonCronComponent {
     hideMonthlyTab: false,
     hideYearlyTab: false,
     hideAdvancedTab: false,
-    hideSpecificWeekDayTab: false,
-    hideSpecificMonthWeekTab: false,
 
     use24HourTime: false,
     hideSeconds: false,
