@@ -6,7 +6,14 @@ import {
   OnInit,
   Output,
 } from '@angular/core';
-import { CronOptions } from './CronOptions';
+import {
+  CronOptions,
+  CronState,
+  DailyCronState,
+  MonthlyCronState,
+  WeeklyCronState,
+  YearlyCronState,
+} from './CronOptions';
 import { Days, Months, MonthWeeks } from './enums';
 import {
   AbstractControl,
@@ -55,7 +62,7 @@ export class CronGenComponent implements OnInit, ControlValueAccessor {
   public activeTab = '';
   public activeSubTab = '';
   public selectOptions = this.getSelectOptions();
-  public state: any;
+  public state!: CronState;
 
   private localCron = '0 0 1/1 * *';
   private isDirty = false;
@@ -256,14 +263,17 @@ export class CronGenComponent implements OnInit, ControlValueAccessor {
     );
   }
 
-  private computeMinutesCron(state: any) {
+  private computeMinutesCron(state: { seconds: number; minutes: number }) {
     this.cron = `${this.isCronFlavorQuartz ? state.seconds : ''} 0/${
       state.minutes
     } * 1/1 * ${this.weekDayDefaultChar} ${this.yearDefaultChar}`.trim();
   }
 
-  private computeHourlyCron(state: any) {
-    console.log('Does this cool guy get called!? ', state);
+  private computeHourlyCron(state: {
+    seconds: number;
+    minutes: number;
+    hours: number;
+  }) {
     this.cron = `${this.isCronFlavorQuartz ? state.seconds : ''} ${
       state.minutes
     } 0/${state.hours} 1/1 * ${this.weekDayDefaultChar} ${
@@ -271,15 +281,14 @@ export class CronGenComponent implements OnInit, ControlValueAccessor {
     }`.trim();
   }
 
-  private computeDailyCron(state: any) {
-    console.log('I removed subtab stuff whats going on with this ', state);
+  private computeDailyCron(state: DailyCronState) {
     switch (state.subTab) {
       case 'everyDays':
         this.cron = `${
           this.isCronFlavorQuartz ? state.everyDays.seconds : ''
         } ${state.everyDays.minutes} ${this.hourToCron(
           state.everyDays.hours,
-          state.everyDays.hourType
+          state.everyDays.hourType ?? ''
         )} 1/${state.everyDays.days} * ${this.weekDayDefaultChar} ${
           this.yearDefaultChar
         }`.trim();
@@ -289,7 +298,7 @@ export class CronGenComponent implements OnInit, ControlValueAccessor {
           this.isCronFlavorQuartz ? state.everyWeekDay.seconds : ''
         } ${state.everyWeekDay.minutes} ${this.hourToCron(
           state.everyWeekDay.hours,
-          state.everyWeekDay.hourType
+          state.everyWeekDay.hourType ?? ''
         )} ${this.monthDayDefaultChar} * MON-FRI ${
           this.yearDefaultChar
         }`.trim();
@@ -299,23 +308,25 @@ export class CronGenComponent implements OnInit, ControlValueAccessor {
     }
   }
 
-  private computeWeeklyCron(state: any) {
-    const days = this.selectOptions.days.filter((day) => state[day]).join(',');
+  private computeWeeklyCron(state: WeeklyCronState) {
+    const days = this.selectOptions.days
+      .filter((day) => state[this.getCastedDay(day)])
+      .join(',');
     this.cron = `${this.isCronFlavorQuartz ? state.seconds : ''} ${
       state.minutes
-    } ${this.hourToCron(state.hours, state.hourType)} ${
+    } ${this.hourToCron(state.hours, state.hourType ?? '')} ${
       this.monthDayDefaultChar
     } * ${days} ${this.yearDefaultChar}`.trim();
   }
 
-  private computeMonthlyCron(state: any) {
+  private computeMonthlyCron(state: MonthlyCronState) {
     switch (state.subTab) {
       case 'specificDay':
         this.cron = `${
           this.isCronFlavorQuartz ? state.specificDay.seconds : ''
         } ${state.specificDay.minutes} ${this.hourToCron(
           state.specificDay.hours,
-          state.specificDay.hourType
+          state.specificDay.hourType ?? ''
         )} ${state.specificDay.day} 1/${state.specificDay.months} ${
           this.weekDayDefaultChar
         } ${this.yearDefaultChar}`.trim();
@@ -325,7 +336,7 @@ export class CronGenComponent implements OnInit, ControlValueAccessor {
           this.isCronFlavorQuartz ? state.specificWeekDay.seconds : ''
         } ${state.specificWeekDay.minutes} ${this.hourToCron(
           state.specificWeekDay.hours,
-          state.specificWeekDay.hourType
+          state.specificWeekDay.hourType ?? ''
         )} ${this.monthDayDefaultChar} 1/${state.specificWeekDay.months} ${
           state.specificWeekDay.day
         }${state.specificWeekDay.monthWeek} ${this.yearDefaultChar}`.trim();
@@ -335,14 +346,14 @@ export class CronGenComponent implements OnInit, ControlValueAccessor {
     }
   }
 
-  private computeYearlyCron(state: any) {
+  private computeYearlyCron(state: YearlyCronState) {
     switch (state.subTab) {
       case 'specificMonthDay':
         this.cron = `${
           this.isCronFlavorQuartz ? state.specificMonthDay.seconds : ''
         } ${state.specificMonthDay.minutes} ${this.hourToCron(
           state.specificMonthDay.hours,
-          state.specificMonthDay.hourType
+          state.specificMonthDay.hourType ?? ''
         )} ${state.specificMonthDay.day} ${state.specificMonthDay.month} ${
           this.weekDayDefaultChar
         } ${this.yearDefaultChar}`.trim();
@@ -352,7 +363,7 @@ export class CronGenComponent implements OnInit, ControlValueAccessor {
           this.isCronFlavorQuartz ? state.specificMonthWeek.seconds : ''
         } ${state.specificMonthWeek.minutes} ${this.hourToCron(
           state.specificMonthWeek.hours,
-          state.specificMonthWeek.hourType
+          state.specificMonthWeek.hourType ?? ''
         )} ${this.monthDayDefaultChar} ${state.specificMonthWeek.month} ${
           state.specificMonthWeek.day
         }${state.specificMonthWeek.monthWeek} ${this.yearDefaultChar}`.trim();
@@ -492,11 +503,14 @@ export class CronGenComponent implements OnInit, ControlValueAccessor {
     ) {
       this.activeTab = 'weekly';
       this.selectOptions.days.forEach(
-        (weekDay) => (this.state.weekly[weekDay] = false)
+        (weekDay: string) =>
+          (this.state.weekly[this.getCastedDay(weekDay)] = false)
       );
       dayOfWeek
         .split(',')
-        .forEach((weekDay) => (this.state.weekly[weekDay] = true));
+        .forEach(
+          (weekDay) => (this.state.weekly[this.getCastedDay(weekDay)] = true)
+        );
       const parsedHours = parseInt(hours, 10);
       this.state.weekly.hours = this.getAmPmHour(parsedHours);
       this.state.weekly.hourType = this.getHourType(parsedHours);
@@ -581,7 +595,7 @@ export class CronGenComponent implements OnInit, ControlValueAccessor {
     return false;
   }
 
-  private getDefaultState() {
+  private getDefaultState(): CronState {
     const [defaultHours, defaultMinutes, defaultSeconds] =
       this.options.defaultTime.split(':').map(Number);
     this.localCron = this.isCronFlavorQuartz ? '* 0 0 ? * * *' : '0 0 1/1 * *';
@@ -749,6 +763,10 @@ export class CronGenComponent implements OnInit, ControlValueAccessor {
 
   getFormGroup(control: AbstractControl) {
     return control as FormGroup;
+  }
+
+  private getCastedDay(day: string) {
+    return day as 'SUN' | 'MON' | 'TUE' | 'WED' | 'THU' | 'FRI' | 'SAT';
   }
 
   onSubTabChange(): void {}

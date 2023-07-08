@@ -161,19 +161,11 @@
         <div [formGroup]="monthlyForm">
           <ion-item>
             <ion-radio-group formControlName="subTab">
-              <ion-radio
-                name="monthly-radio"
-                value="specificDay"
-                [ngClass]="state.formRadioClass"
-              >
+              <ion-radio name="monthly-radio" value="specificDay">
                 Specific Day
               </ion-radio>
               <br />
-              <ion-radio
-                name="monthly-radio"
-                value="specificWeekDay"
-                [ngClass]="state.formRadioClass"
-              >
+              <ion-radio name="monthly-radio" value="specificWeekDay">
                 Specific WeekDay
               </ion-radio>
             </ion-radio-group>
@@ -320,19 +312,11 @@
         <div [formGroup]="yearlyForm">
           <ion-item lines="none">
             <ion-radio-group formControlName="subTab">
-              <ion-radio
-                name="monthly-radio"
-                value="specificMonthDay"
-                [ngClass]="state.formRadioClass"
-              >
+              <ion-radio name="monthly-radio" value="specificMonthDay">
                 Specific Month Day
               </ion-radio>
               <br />
-              <ion-radio
-                name="monthly-radio"
-                value="specificMonthWeek"
-                [ngClass]="state.formRadioClass"
-              >
+              <ion-radio name="monthly-radio" value="specificMonthWeek">
                 Specific Month Week
               </ion-radio>
             </ion-radio-group>
